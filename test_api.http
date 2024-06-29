@@ -1,0 +1,25 @@
+
+POST https://1qw45krk94.execute-api.eu-west-1.amazonaws.com/prod/personas
+Content-Type: application/json
+
+{
+  "id" : "1",
+  "first_name" : "Giona",
+  "last_name" :  "Test",
+  "phone_number" : "12321321",
+  "address" :  "adsadasda"
+}
+
+### Localhost
+
+
+POST http://127.0.0.1:3000/personas
+Content-Type: application/json
+
+{
+  "id" : "1",
+  "first_name" : "Giona",
+  "last_name" :  "Test",
+  "phone_number" : "12321321",
+  "address" :  "adsadasda"
+}
