@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  PersonaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bootstrap
+      Runtime: go1.x
+      CodeUri: ./lambda
+      Environment:
+        Variables:
+          TABLE_NAME: PersonaTable
+      Architectures:
+        - x86_64
+      Events:
+        PostPerson:
+          Type: Api
+          Properties:
+            Path: /personas
+            Method: post
+    Metadata:
+        BuildMethod: makefile
+  PersonaTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PersonaTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
