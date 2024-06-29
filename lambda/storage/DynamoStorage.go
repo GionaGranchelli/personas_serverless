@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
@@ -40,4 +41,57 @@ func NewDynamoStorage(sess *session.Session, tableName string) *DynamoStorage {
 		svc:       dynamodb.New(sess),
 		tableName: tableName,
 	}
+}
+
+func (storage *DynamoStorage) GetPersonaByID(ctx context.Context, id string) (*model.Persona, error) {
+	fmt.Printf("Getting Person by ID:: %s\n", id)
+	input := &dynamodb.GetItemInput{
+		TableName: &storage.tableName,
+		Key: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String(id),
+			},
+		},
+	}
+
+	result, err := storage.svc.GetItemWithContext(ctx, input)
+	if err != nil {
+		fmt.Printf("GetItemWithContext Error: %s\n", err.Error())
+		return nil, err
+	}
+
+	if result.Item == nil {
+		fmt.Printf("Persona with Id: %s cannot be find", id)
+		return nil, nil
+	}
+
+	var persona model.Persona
+	err = dynamodbattribute.UnmarshalMap(result.Item, &persona)
+	if err != nil {
+		fmt.Printf("UnmarshalMap Error: %s\n", err.Error())
+		return nil, err
+	}
+
+	return &persona, nil
+}
+
+func (storage *DynamoStorage) GetAllPersonas(ctx context.Context) ([]*model.Persona, error) {
+	input := &dynamodb.ScanInput{
+		TableName: &storage.tableName,
+	}
+
+	result, err := storage.svc.ScanWithContext(ctx, input)
+	if err != nil {
+		fmt.Printf("Cannot scan the Db Error: %s\n", err.Error())
+		return nil, err
+	}
+
+	var personas []*model.Persona
+	err = dynamodbattribute.UnmarshalListOfMaps(result.Items, &personas)
+	if err != nil {
+		fmt.Printf("UnmarshalMap Error: %s\n", err.Error())
+		return nil, err
+	}
+
+	return personas, nil
 }
