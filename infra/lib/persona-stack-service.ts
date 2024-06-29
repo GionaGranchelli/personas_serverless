@@ -43,8 +43,16 @@ export class PersonaStackService extends cdk.Stack {
       restApiName: 'Persona Service'
     });
 
-    const personaResource = api.root.addResource('personas');
+    const personaResource = api.root.addResource('personas'); // Create /personas resource
+    const personaByIdResource = personaResource.addResource('{id}'); // create /personas/{id} resource
+
+    // Create a new persona
     personaResource.addMethod('POST', new apigateway.LambdaIntegration(personaLambda));
+    // Get a persona by ID
+    personaByIdResource.addMethod('GET', new apigateway.LambdaIntegration(personaLambda));
+    // Get all personas
+    personaResource.addMethod('GET', new apigateway.LambdaIntegration(personaLambda));
+
 
     // EventBridge Rule for Person Created event
     const rule = new events.Rule(this, 'PersonCreatedRule', {
