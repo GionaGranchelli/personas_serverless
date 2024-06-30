@@ -48,17 +48,18 @@ deploy() {
   echo "Deploying to $1 environment..."
   npm run build
 
+  echo "Current Location: $(pwd)"
+  echo "STACK_NAME: $STACK_NAME"
+  echo "STAGE_NAME: $STAGE_NAME"
+
+  cdk deploy "$STACK_NAME" -c stageName="$STAGE_NAME"
+
   # Get the API Gateway URL from the CloudFormation stack outputs
   API_URL=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" --output text)
 
   echo "API URL: $API_URL"
   # Update api-config.json with the API URL
   echo "{\"apiUrl\": \"$API_URL\"}" > ../persona-app-ts/public/api-config.json
-  echo "Current Location: $(pwd)"
-  echo "STACK_NAME: $STACK_NAME"
-  echo "STAGE_NAME: $STAGE_NAME"
-
-  cdk deploy "$STACK_NAME" -c stageName="$STAGE_NAME"
 }
 
 # Check if the script is called with an argument

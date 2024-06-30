@@ -53,5 +53,3 @@ h2 {
   text-align: center;
 }
 </style>
-<script setup>
-</script>
