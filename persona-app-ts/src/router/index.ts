@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import AboutView from '../views/AboutView.vue'
+import HomeView from '@/views/HomeView.vue'
+import AboutView from '@/views/AboutView.vue'
 import CreatePersona from '@/views/CreatePersona.vue'
 import ListPersonas from '@/views/ListPersonas.vue'
 import SearchPersona from '@/views/SearchPersona.vue'
@@ -17,22 +17,22 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      component: () => AboutView
+      component: AboutView
     },
     {
       path: '/create-persona',
       name: 'Create-Persona',
-      component: () => CreatePersona
+      component: CreatePersona
     },
     {
       path: '/list-personas',
       name: 'List-Personas',
-      component: () => ListPersonas
+      component: ListPersonas
     },
     {
       path: '/search-persona',
       name: 'Search-Personas',
-      component: () => SearchPersona
+      component: SearchPersona
     }
 
   ]

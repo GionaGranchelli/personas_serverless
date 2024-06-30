@@ -5,11 +5,11 @@ POST https://1qw45krk94.execute-api.eu-west-1.amazonaws.com/prod/personas
 Content-Type: application/json
 
 {
-  "id" : "3",
-  "first_name" : "Giona",
-  "last_name" :  "TestRRR",
-  "phone_number" : "12321321",
-  "address" :  "adsadasda"
+  "id": "3",
+  "first_name": "Giona",
+  "last_name": "TestRRR",
+  "phone_number": "12321321",
+  "address": "adsadasda"
 }
 
 ### GET By ID
@@ -27,21 +27,26 @@ POST http://127.0.0.1:3000/personas
 Content-Type: application/json
 
 {
-  "first_name" : "Giona",
-  "last_name" :  "Test",
-  "phone_number" : "12321321",
-  "address" :  "adsadasda"
+  "first_name": "Giona",
+  "last_name": "Test",
+  "phone_number": "12321321",
+  "address": "adsadasda"
 }
 
 
 ### DEV
+< {%
+  request.variables.set('first_name', Math.random().toString(36).substring(7).toString())
+  request.variables.set('last_name', Math.random().toString(36).substring(3).toString())
+  request.variables.set('phone_number', Math.random().toString(36).substring(1).toString())
+  request.variables.set('address', Math.random().toString(36).substring(2).toString())
+%}
 POST https://ugws6zbab4.execute-api.eu-west-1.amazonaws.com/dev/personas
 Content-Type: application/json
 
 {
-  "id" : "3",
-  "first_name" : "Giona",
-  "last_name" :  "Test",
-  "phone_number" : "12321321",
-  "address" :  "adsadasda"
+  "first_name" : "{{first_name}}",
+  "last_name" :  "{{last_name}}",
+  "phone_number" : "{{phone_number}}",
+  "address" :  "{{address}}"
 }
