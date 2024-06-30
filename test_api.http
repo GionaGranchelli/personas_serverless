@@ -17,7 +17,7 @@ GET https://1qw45krk94.execute-api.eu-west-1.amazonaws.com/prod/personas/3
 Content-Type: application/json
 
 ### GET ALL
-GET https://1qw45krk94.execute-api.eu-west-1.amazonaws.com/prod/personas
+GET {PROD_URL}/personas
 Content-Type: application/json
 
 # Localhost
@@ -41,7 +41,7 @@ Content-Type: application/json
   request.variables.set('phone_number', Math.random().toString(36).substring(1).toString())
   request.variables.set('address', Math.random().toString(36).substring(2).toString())
 %}
-POST https://ugws6zbab4.execute-api.eu-west-1.amazonaws.com/dev/personas
+POST {DEV_URL}/personas
 Content-Type: application/json
 
 {
