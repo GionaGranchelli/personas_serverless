@@ -35,4 +35,13 @@ Content-Type: application/json
 
 
 ### DEV
-POST https://ugws6zbab4.execute-api.eu-west-1.amazonaws.com/prod/dev/personas
+POST https://ugws6zbab4.execute-api.eu-west-1.amazonaws.com/dev/personas
+Content-Type: application/json
+
+{
+  "id" : "3",
+  "first_name" : "Giona",
+  "last_name" :  "Test",
+  "phone_number" : "12321321",
+  "address" :  "adsadasda"
+}

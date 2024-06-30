@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/google/uuid"
 	"lambda/event"
 	"lambda/model"
 	"lambda/storage"
@@ -24,7 +25,8 @@ func NewHandler(storage storage.Storage, publisher event.Publisher) *Handler {
 }
 
 var defaultHeader = map[string]string{
-	"Content-Type": "application/json",
+	"Content-Type":                "application/json",
+	"Access-Control-Allow-Origin": "*",
 }
 
 func (h *Handler) HandlerRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -46,33 +48,37 @@ func (h *Handler) HandlerRequest(ctx context.Context, request events.APIGatewayP
 	}
 }
 func (h *Handler) createPersona(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	fmt.Println("Unmarshaling Request Body")
+	fmt.Println("Unmarshalling Request Body")
 	var persona model.Persona
 	err := json.Unmarshal([]byte(request.Body), &persona)
 	if err != nil {
 		fmt.Printf("Unmarshalling Error %s\n", err.Error())
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest, Body: err.Error(), Headers: defaultHeader}, nil
+		jsonError, _ := json.Marshal(err.Error())
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusBadRequest, Body: string(jsonError), Headers: defaultHeader}, nil
 	}
-
+	persona.ID = uuid.New().String()
 	fmt.Println("Saving Persona in Storage")
 	err = h.storage.SavePersona(ctx, &persona)
 	if err != nil {
 		fmt.Printf("Storage Error:%s\n\n", err.Error())
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError, Body: err.Error(), Headers: defaultHeader}, nil
+		jsonError, _ := json.Marshal(err.Error())
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError, Body: string(jsonError), Headers: defaultHeader}, nil
 	}
 
 	fmt.Println("Publish Persona in Event Log")
 	err = h.publisher.PublishPersona(ctx, persona)
 	if err != nil {
 		fmt.Printf("Publisher Error:%s\n\n", err.Error())
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError, Body: err.Error(), Headers: defaultHeader}, nil
+		jsonError, _ := json.Marshal(err.Error())
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError, Body: string(jsonError), Headers: defaultHeader}, nil
 	}
 
-	fmt.Println("Mashaling Response")
+	fmt.Println("Marshaling Response")
 	responseBody, err := json.Marshal(persona)
 	if err != nil {
 		fmt.Printf("Marshalling Error: %s\n\n", err.Error())
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError, Body: err.Error(), Headers: defaultHeader}, nil
+		jsonError, _ := json.Marshal(err.Error())
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusInternalServerError, Body: string(jsonError), Headers: defaultHeader}, nil
 	}
 
 	fmt.Println("Alles Goede")
