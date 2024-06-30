@@ -89,6 +89,7 @@ Install dependencies for Frontend:
 ## Running with AWS CDK
 If you want to deploy the application using AWS CDK, you can do so by running the following commands:
 ```sh
+cd infra
 cdk bootstrap
 cdk deploy
 ```
@@ -96,7 +97,6 @@ cdk deploy
 ## Running with SAM Local
 If you want to run the Lambda functions locally using SAM, you can do so by running the following commands:
 ```sh
-cd sam
 sam build
 sam local start-api
 ```
