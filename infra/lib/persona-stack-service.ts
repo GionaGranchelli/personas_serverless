@@ -8,15 +8,19 @@ import * as targets from 'aws-cdk-lib/aws-events-targets';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 
+interface PersonaStackServiceProps extends cdk.StackProps {
+  tableName: string;
+  stageName: string;
+}
 
 export class PersonaStackService extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: PersonaStackServiceProps) {
     super(scope, id, props);
 
 // Creation of a Table in DynamoDB
     const table = new dynamodb.Table(this, 'PersonaTable', {
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-      tableName: 'PersonaTable',
+      tableName: props.tableName,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
     });
 
@@ -40,7 +44,10 @@ export class PersonaStackService extends cdk.Stack {
 
     // API Gateway
     const api = new apigateway.RestApi(this, 'persona-api', {
-      restApiName: 'Persona Service'
+      restApiName: 'Persona Service',
+      deployOptions: {
+        stageName: props.stageName,
+      },
     });
 
     const personaResource = api.root.addResource('personas'); // Create /personas resource
